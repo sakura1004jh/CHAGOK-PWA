@@ -2003,6 +2003,14 @@ function renderSettings(){
     html += '</div>';
   });
 
+  html += '<div class="card"><div class="card-head"><span class="card-title">앱 정보</span></div>'+
+    '<div style="display:flex;flex-direction:column;gap:12px;font-size:0.9rem;">'+
+    '<div><strong style="color:var(--ink);">작성자</strong><br>jaehee</div>'+
+    '<div><strong style="color:var(--ink);">이메일</strong><br><a href="mailto:sakura1004jh@gmail.com" style="color:var(--brand);text-decoration:none;">sakura1004jh@gmail.com</a></div>'+
+    '<div><strong style="color:var(--ink);">버전</strong><br>v1.0</div>'+
+    '<div><strong style="color:var(--ink);">GitHub</strong><br><a href="https://github.com/sakura1004jh/chagok-pwa" target="_blank" style="color:var(--brand);text-decoration:none;">sakura1004jh/chagok-pwa</a></div>'+
+    '</div></div>';
+
   html += '<div class="card"><div class="card-head"><span class="card-title">데이터</span></div>'+
     '<div style="display:flex;gap:10px;flex-wrap:wrap;">'+
     '<button class="btn" data-action="export-csv">CSV로 내보내기</button>'+
