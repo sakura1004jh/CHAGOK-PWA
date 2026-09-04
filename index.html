@@ -15,6 +15,7 @@ GitHub: https://github.com/sakura1004jh/chagok-pwa
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#1F6F5C">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 <style>
   :root{
     color-scheme: light;
@@ -166,7 +167,8 @@ GitHub: https://github.com/sakura1004jh/chagok-pwa
   .save-dot.pending{background:var(--warning);}
   .save-dot.off{background:var(--ink-faint);}
 
-  #main{padding:28px 32px 96px;max-width:1080px;}
+  #main{padding:28px 32px 96px;max-width:1080px;overflow:visible;}
+#main.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
   .page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap;}
   .page-title{font-size:1.5rem;}
   .page-desc{color:var(--ink-soft);font-size:0.88rem;margin-top:4px;}
@@ -183,14 +185,15 @@ GitHub: https://github.com/sakura1004jh/chagok-pwa
   .stat-value.income{color:var(--income);}
   .stat-value.expense{color:var(--expense);}
   .stat-caption{font-size:0.72rem;color:var(--ink-faint);margin-top:4px;}
-  .card{
+    .card{
     background:var(--surface);border:1px solid var(--line);border-radius:14px;
     padding:18px 20px;box-shadow:var(--shadow);
+    display:block;width:100%;overflow:visible;min-height:auto;
   }
   .card + .card{margin-top:16px;}
   .card-head{
-    display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:8px;flex-wrap:wrap;
-    padding-bottom:12px;border-bottom:2px solid var(--line);
+    display:grid;grid-template-columns:1fr 160px 200px;align-items:center;margin-bottom:14px;gap:8px;
+    padding-bottom:12px;border-bottom:2px solid var(--line);height:28px;
   }
   .card-title{font-size:1.05rem;font-weight:700;letter-spacing:-0.3px;}
   /* settings 섹션별 색상 테마 */
@@ -202,6 +205,30 @@ GitHub: https://github.com/sakura1004jh/chagok-pwa
   #main .card:nth-child(4) .card-title{color:var(--income);}
   #main .card:nth-child(5) .card-head{border-bottom-color:var(--brand);}
   #main .card:nth-child(5) .card-title{color:var(--brand);}
+
+  /* settings section (카테고리별 - 박스 없음) */
+  .settings-section{margin-top:28px;margin-bottom:28px;}
+  .settings-section-head{
+    display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:8px;flex-wrap:wrap;
+    padding-bottom:12px;border-bottom:2px solid var(--line);
+  }
+  .settings-section-title{font-size:1.05rem;font-weight:700;letter-spacing:-0.3px;}
+  /* 카테고리별 색상 테마 */
+  #main .settings-section:nth-of-type(1) .settings-section-head{border-bottom-color:var(--brand);}
+  #main .settings-section:nth-of-type(1) .settings-section-title{color:var(--brand);}
+  #main .settings-section:nth-of-type(2) .settings-section-head{border-bottom-color:var(--expense);}
+  #main .settings-section:nth-of-type(2) .settings-section-title{color:var(--expense);}
+  #main .settings-section:nth-of-type(3) .settings-section-head{border-bottom-color:var(--income);}
+  #main .settings-section:nth-of-type(3) .settings-section-title{color:var(--income);}
+  #main .settings-section:nth-of-type(4) .settings-section-head{border-bottom-color:var(--brand);}
+  #main .settings-section:nth-of-type(4) .settings-section-title{color:var(--brand);}
+
+  /* 설정 탭: 모든 배경 제거 */
+  #main.settings-view [data-settings-container]{background:transparent;}
+  #main.settings-view .bd-items{background:transparent;}
+  #main.settings-view .bd-group{background:transparent;}
+  #main.settings-view .catrow{background:none;}
+  #main.settings-view .catrow:hover{background:transparent;}
   .muted{color:var(--ink-soft);}
   .faint{color:var(--ink-faint);}
 
@@ -261,23 +288,34 @@ GitHub: https://github.com/sakura1004jh/chagok-pwa
     background:var(--surface);color:var(--ink);font-size:0.82rem;
   }
   .breakdown-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
-  .breakdown-panel .card-head{margin-bottom:4px;}
-  .breakdown-total{font-size:1.05rem;font-weight:700;}
-  .bd-total-row{display:flex;align-items:center;gap:8px;margin:0 0 12px;}
-  .bd-group{padding:10px 0;border-bottom:1px solid var(--line);}
+  .breakdown-panel .card-head{margin-bottom:12px;}
+  .card-head>:nth-child(2){align-self:center;}
+  .card-head>:nth-child(3){align-self:center;}
+  .breakdown-total{font-size:1.05rem;font-weight:700;text-align:right;}
+  .bd-total-row{display:flex;align-items:center;gap:6px;margin:0;width:100%;height:22px;}
+  .barlist-track{display:flex;align-items:center;justify-content:flex-start;height:6px;}
+  .bd-group{padding:0;border-bottom:none;background:none;border-radius:0;margin-bottom:0;overflow:visible;min-height:auto;}
   .bd-group:last-child{border-bottom:none;}
   .bd-group-head{
-    width:100%;display:flex;align-items:center;gap:8px;background:none;border:none;
-    padding:2px 0;cursor:pointer;color:var(--ink);text-align:left;font:inherit;
+    width:100%;display:flex;align-items:center;gap:0;background:none;border:none;
+    padding:6px 12px;cursor:pointer;color:var(--ink);text-align:left;font:inherit;height:28px;
+    margin-bottom:0;border-bottom:1px solid var(--line);transition:none;border-radius:0;font-weight:600;font-size:0.9rem;
   }
+  .bd-group-head .bd-chev{flex:0 0 14px;}
+  .bd-group-head .bd-group-name{flex:1;min-width:0;margin-left:6px;}
+  .bd-group-head .barlist-track{flex:0 0 140px;max-width:140px;}
+  .bd-group-head .bd-group-pct{flex:0 0 50px;text-align:right;}
+  .bd-group-head .bd-group-amt{flex:0 0 170px;text-align:right;}
+  .bd-group-head:hover{background:var(--surface-alt);}
+  .bd-group-head:last-of-type{border-bottom:none;}
   .bd-chev{display:inline-flex;width:14px;height:14px;color:var(--ink-faint);transform:rotate(90deg);transition:transform .15s ease;flex:none;}
   .bd-chev svg{width:14px;height:14px;display:block;}
   .bd-chev.collapsed{transform:rotate(0deg);}
-  .bd-group-name{font-weight:700;font-size:0.9rem;flex:1;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .bd-group-name{font-weight:700;font-size:0.85rem;flex:1;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .bd-group-pct{font-size:0.78rem;min-width:34px;text-align:right;flex:none;}
   .bd-group-amt{font-size:0.9rem;min-width:88px;text-align:right;flex:none;}
-  .bd-inline-track{width:72px;flex:none;}
-  .bd-items{margin-top:8px;padding-left:22px;}
+  .bd-inline-track{width:100%;flex:none;}
+  .bd-items{margin-top:0;padding-left:24px;background:var(--surface);border:none;display:block;width:100%;overflow:visible;min-height:auto;}
   @media (max-width: 720px){
     .breakdown-grid{grid-template-columns:1fr;}
     .bd-group-amt{min-width:auto;}
@@ -342,7 +380,7 @@ GitHub: https://github.com/sakura1004jh/chagok-pwa
   .lt-amt.income{color:var(--income);}
   .lt-amt.expense{color:var(--expense);}
   .lt-bal{color:var(--ink-soft);}
-  .dot-sm{width:8px;height:8px;border-radius:999px;display:inline-block;margin-right:6px;vertical-align:middle;}
+  .dot-sm{width:10px;height:10px;border-radius:999px;display:inline-block;margin-right:6px;vertical-align:middle;}
   .dot-sm.dot-icon{width:auto;height:auto;border-radius:0;font-size:0.8rem;margin-right:4px;}
 
   /* ---------- ledger list (mobile cards) ---------- */
@@ -392,8 +430,13 @@ GitHub: https://github.com/sakura1004jh/chagok-pwa
     .modal-overlay{align-items:center;}
     .modal-panel{border-radius:18px;max-height:88vh;}
   }
-  .modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+  .modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:12px;}
   .modal-title{font-weight:700;font-size:1.2rem;}
+  .tab-btn{padding:8px 12px;border:none;background:transparent;color:var(--ink-faint);font-weight:500;border-bottom:3px solid transparent;cursor:pointer;transition:color .2s ease, border-color .2s ease;}
+  .tab-btn:hover{color:var(--ink);}
+  .tab-btn.active{color:var(--ink);border-bottom-color:var(--brand);}
+  .tab-pane{display:none;}
+  .tab-pane.active{display:block;}
   .field{margin-bottom:14px;}
   .field label{display:block;font-size:0.78rem;color:var(--ink-soft);margin-bottom:6px;}
   .field input[type="text"], .field input[type="number"], .field input[type="date"], .field select, .field textarea{
@@ -453,7 +496,7 @@ GitHub: https://github.com/sakura1004jh/chagok-pwa
   .barlist{display:flex;flex-direction:column;gap:12px;}
   .barlist-row{display:grid;grid-template-columns:96px 1fr 36px 84px;align-items:center;gap:10px;}
   .barlist-name{font-size:0.86rem;display:flex;align-items:center;gap:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;}
-  .barlist-track{height:10px;border-radius:999px;background:var(--surface-alt);overflow:hidden;display:block;}
+  .barlist-track{height:6px;border-radius:999px;background:var(--surface-alt);overflow:hidden;display:block;}
   .barlist-fill{height:100%;border-radius:999px;display:block;}
   .barlist-pct{font-size:0.78rem;text-align:right;}
   .barlist-val{font-size:0.84rem;text-align:right;}
@@ -479,15 +522,17 @@ GitHub: https://github.com/sakura1004jh/chagok-pwa
      acct-row is the leaf item row, styled like barlist-row's cousin: dot+name,
      inline bar, pct, balance - no click/hover affordance since nothing here opens. */
   .acct-row{
-    display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;
-    padding:12px 4px;border-bottom:1px solid var(--line);
+    display:flex;align-items:center;padding:8px 4px;border-bottom:1px solid var(--line);height:28px;gap:0;
   }
+  .acct-row > .acct-left{flex:1;min-width:0;}
+  .acct-row > .barlist-track{flex:0 0 140px;max-width:140px;}
+  .acct-row > .acct-right{flex:0 0 220px;}
   .acct-row:last-child{border-bottom:none;}
-  .acct-left{display:flex;align-items:center;gap:10px;min-width:0;flex:1;}
+  .acct-left{display:flex;align-items:center;gap:10px;min-width:0;}
   .acct-dot{width:9px;height:9px;border-radius:999px;flex:none;}
   .acct-name{font-size:0.94rem;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .acct-balance{font-size:0.94rem;}
-  .acct-right{display:flex;align-items:center;gap:6px;flex:none;margin-left:auto;}
+  .acct-right{display:flex;align-items:center;gap:6px;flex:1;justify-content:flex-end;white-space:nowrap;overflow:hidden;}
   /* group-head is still used by 설정's editable group headers (drag/move/edit/delete). */
   .group-head{
     display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 8px;
@@ -497,13 +542,20 @@ GitHub: https://github.com/sakura1004jh/chagok-pwa
   .group-name{font-size:0.86rem;font-weight:700;color:var(--brand);cursor:pointer;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .group-name:hover{color:var(--brand-strong);}
   .group-count{font-size:0.74rem;font-weight:400;color:var(--ink-faint);}
-  .group-empty{padding:2px 4px 14px;font-size:0.8rem;color:var(--ink-faint);}
+  .group-empty{padding:10px 0 10px 32px;font-size:0.8rem;color:var(--ink-faint);margin-top:0;}
 
   /* ---------- settings ---------- */
-  .catrow{display:flex;align-items:center;justify-content:space-between;padding:10px 4px;border-bottom:1px solid var(--line);}
+  .catrow{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:8px 12px 8px 36px;margin-bottom:0;
+    background:none;border-radius:0;border:none;border-bottom:1px solid var(--line);transition:none;cursor:grab;
+    font-size:0.9rem; overflow:visible;
+  }
+  .catrow:hover{background:var(--surface-alt);}
   .catrow:last-child{border-bottom:none;}
-  .catrow-left{display:flex;align-items:center;gap:10px;}
-  .icon-btn{background:none;border:none;color:var(--ink-faint);cursor:pointer;padding:6px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;}
+  .catrow-left{display:flex;align-items:center;gap:10px;flex:1;min-width:0;}
+  .icon-btn{background:none;border:none;color:var(--ink-faint);cursor:pointer;padding:4px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;opacity:0.5;transition:opacity .2s ease;}
+  .catrow:hover .icon-btn{opacity:1;}
   .icon-btn:hover{background:var(--surface-alt);color:var(--ink);}
   .icon-btn svg{width:16px;height:16px;display:block;}
   .icon-btn.sm{padding:4px;}
@@ -511,8 +563,50 @@ GitHub: https://github.com/sakura1004jh/chagok-pwa
   .icon-btn:disabled{opacity:0.3;cursor:default;}
   .icon-btn:disabled:hover{background:none;color:var(--ink-faint);}
   .row-controls{display:flex;align-items:center;gap:1px;flex:none;margin-left:auto;}
-  .drag-handle{display:inline-flex;align-items:center;justify-content:center;color:var(--ink-faint);flex:none;cursor:grab;}
+  .drag-handle{display:inline-flex;align-items:center;justify-content:center;color:var(--ink-faint);flex:none;cursor:grab;transition:color .2s ease;}
+  .drag-handle:hover{color:var(--ink);}
   .drag-handle svg{width:14px;height:14px;display:block;}
+  .group-drag-handle{display:inline-flex;align-items:center;justify-content:center;color:var(--ink-faint);flex:none;cursor:grab;transition:color .2s ease;margin-right:4px;}
+  .group-drag-handle:hover{color:var(--ink);}
+  .group-drag-handle svg{width:14px;height:14px;display:block;}
+  .catrow.dragging{background-color:var(--surface-alt);border-radius:4px;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+  .catrow.is-dragging-active{cursor:grabbing;}
+  .catrow.is-dragging-active .drag-handle{cursor:grabbing;color:var(--brand);}
+  .bd-group-head.dragging{background-color:var(--surface-alt);box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+  .bd-group-head.is-dragging-active{cursor:grabbing;}
+  .bd-group-head.is-dragging-active .group-drag-handle{cursor:grabbing;color:var(--brand);}
+  .sortable-group-container{display:contents;}
+
+  /* 평면 리스트 구조 (그룹과 항목 혼합) */
+  .settings-item{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:8px 12px 8px 36px;margin-bottom:0;
+    background:none;border-radius:0;border:none;border-bottom:1px solid var(--line);transition:none;cursor:grab;
+    font-size:0.9rem;overflow:visible;
+  }
+  .settings-item:hover{background:var(--surface-alt);}
+  .settings-item.dragging{background-color:var(--surface-alt);border-radius:4px;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+  .settings-item.is-dragging-active{cursor:grabbing;}
+  .settings-item.is-dragging-active .group-drag-handle,
+  .settings-item.is-dragging-active .drag-handle{cursor:grabbing;color:var(--brand);}
+
+  .settings-item.group-header{
+    padding:8px 12px 8px 36px;
+    font-weight:600;
+    background:none;
+    border-bottom:1px solid var(--line);
+  }
+  .settings-item.group-header .group-name{
+    font-weight:600;
+    color:var(--ink);
+  }
+  .settings-item.account-item{
+    padding-left:36px;
+  }
+
+  /* Sortable 드래그 효과 */
+  .sortable-ghost{opacity:0.4;background:var(--line);}
+  .sortable-drag{opacity:0.95;box-shadow:var(--shadow);background:var(--surface);border-radius:6px;z-index:100;}
 
   /* ---------- toast ---------- */
   #toast{
@@ -533,7 +627,7 @@ GitHub: https://github.com/sakura1004jh/chagok-pwa
       padding:16px 18px;position:sticky;top:0;background:var(--surface);
       border-bottom:1px solid var(--line);z-index:30;
     }
-    #main{padding:16px 16px 90px;}
+    #main{padding:16px 16px 90px;overflow:visible;}
     .grid-stats{grid-template-columns:1fr;}
     .desktop-only{display:none;}
     .mobile-only{display:block;}
@@ -609,9 +703,11 @@ var ICONS = {
   list:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="3.5" cy="6" r="1.1" fill="currentColor" stroke="none"/><circle cx="3.5" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="3.5" cy="18" r="1.1" fill="currentColor" stroke="none"/></svg>',
   copy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>',
   refresh:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v6h-6"/></svg>',
-  grip:'<svg viewBox="0 0 24 24" fill="none" stroke="none"><circle cx="9" cy="6" r="1.4" fill="currentColor"/><circle cx="15" cy="6" r="1.4" fill="currentColor"/><circle cx="9" cy="12" r="1.4" fill="currentColor"/><circle cx="15" cy="12" r="1.4" fill="currentColor"/><circle cx="9" cy="18" r="1.4" fill="currentColor"/><circle cx="15" cy="18" r="1.4" fill="currentColor"/></svg>'
+  grip:'<svg viewBox="0 0 24 24" fill="none" stroke="none"><circle cx="9" cy="6" r="1.4" fill="currentColor"/><circle cx="15" cy="6" r="1.4" fill="currentColor"/><circle cx="9" cy="12" r="1.4" fill="currentColor"/><circle cx="15" cy="12" r="1.4" fill="currentColor"/><circle cx="9" cy="18" r="1.4" fill="currentColor"/><circle cx="15" cy="18" r="1.4" fill="currentColor"/></svg>',
+  pin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 2v10M6 8h12M7 20h10a1 1 0 0 0 1-1v-6a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1Z"/></svg>',
+  fix:'<svg viewBox="0 0 16 16" fill="none"><g fill="#4a3aa7"><rect x="5" y="1" width="6" height="3" rx="0.5"/><path d="M7 4h2v1h-2zm-1 1h1v1H6zm2 0h1v1H8zm-1 1h2v3h-2zm-2 3h6l-1 6H6l-1-6z"/></g></svg>'
 };
-var SWATCH_KEYS = ["c1","c2","c3","c4","c5","c6","c7","c8"];
+var SWATCH_KEYS = ["1","2","3","4","5","6","7","8"];
 var CLS_LABEL = {asset:"자산", liability:"부채", income:"수익", expense:"비용"};
 /* Flat single-color dots instead of pictorial emoji, per class - keeps the
    account/card list monotone rather than a mix of colorful icon images. */
@@ -659,15 +755,15 @@ function defaultState(){
       {id:"a-savings", name:"정기적금", cls:"asset", initial:0, groupId:"g-a-saving"},
       {id:"l-card", name:"신용카드", cls:"liability", initial:0, groupId:"g-l-card"},
       {id:"l-loan", name:"학자금대출", cls:"liability", initial:0, groupId:null},
-      {id:"e-food", name:"식비", cls:"expense", swatch:"c1", groupId:"g-e-life"},
-      {id:"e-cafe", name:"카페/간식", cls:"expense", swatch:"c2", groupId:"g-e-life"},
-      {id:"e-transit", name:"교통", cls:"expense", swatch:"c3", groupId:"g-e-transit"},
-      {id:"e-culture", name:"문화/여가", cls:"expense", swatch:"c4", groupId:"g-e-etc"},
-      {id:"e-health", name:"의료/건강", cls:"expense", swatch:"c5", groupId:"g-e-etc"},
-      {id:"e-shopping", name:"쇼핑", cls:"expense", swatch:"c6", groupId:"g-e-life"},
-      {id:"e-housing", name:"주거/통신", cls:"expense", swatch:"c7", groupId:"g-e-fixed"},
-      {id:"e-edu", name:"교육", cls:"expense", swatch:"c8", groupId:"g-e-etc"},
-      {id:"e-etc", name:"기타", cls:"expense", swatch:"other", groupId:null},
+      {id:"e-food", name:"식비", cls:"expense", swatch:"1", groupId:"g-e-life", expenseType:"variable"},
+      {id:"e-cafe", name:"카페/간식", cls:"expense", swatch:"2", groupId:"g-e-life", expenseType:"variable"},
+      {id:"e-transit", name:"교통", cls:"expense", swatch:"3", groupId:"g-e-transit", expenseType:"variable"},
+      {id:"e-culture", name:"문화/여가", cls:"expense", swatch:"4", groupId:"g-e-etc", expenseType:"variable"},
+      {id:"e-health", name:"의료/건강", cls:"expense", swatch:"5", groupId:"g-e-etc", expenseType:"variable"},
+      {id:"e-shopping", name:"쇼핑", cls:"expense", swatch:"6", groupId:"g-e-life", expenseType:"variable"},
+      {id:"e-housing", name:"주거/통신", cls:"expense", swatch:"7", groupId:"g-e-fixed", expenseType:"fixed"},
+      {id:"e-edu", name:"교육", cls:"expense", swatch:"8", groupId:"g-e-etc", expenseType:"variable"},
+      {id:"e-etc", name:"기타", cls:"expense", swatch:"other", groupId:null, expenseType:"variable"},
       {id:"i-salary", name:"급여", cls:"income", swatch:"c1", groupId:"g-i-main"},
       {id:"i-allowance", name:"용돈", cls:"income", swatch:"c2", groupId:"g-i-extra"},
       {id:"i-side", name:"부수입", cls:"income", swatch:"c3", groupId:"g-i-extra"},
@@ -709,6 +805,18 @@ if(!state.activeSessionId){
 }
 if(!Array.isArray(state.groups)) state.groups = [];
 
+// 마이그레이션: 기존 expense 카테고리에 expenseType 속성 추가
+Object.keys(state.sessions).forEach(function(sid){
+  var sess = state.sessions[sid];
+  if(sess.accounts && Array.isArray(sess.accounts)){
+    sess.accounts.forEach(function(acc){
+      if(acc.cls==="expense" && !acc.expenseType){
+        acc.expenseType = "variable";
+      }
+    });
+  }
+});
+
 var ui = {
   tab:"home",
   activeSessionId: state.activeSessionId,
@@ -726,6 +834,7 @@ var ui = {
   ledgerMemoQuery:"",
   ledgerAmountFrom:"",
   ledgerAmountTo:"",
+  ledgerSelectedDate:"",
   ledgerSelectedTxIds: {},
   breakdownMode:"month",
   breakdownMonth: monthKey(new Date()),
@@ -734,6 +843,7 @@ var ui = {
   breakdownTo: todayIso(),
   breakdownCollapsed: {},
   acctsCollapsed: {},
+  settingsCollapsed: {},
   modal:null
 };
 (function restoreUi(){
@@ -756,6 +866,7 @@ var ui = {
       ui.ledgerMemoQuery = parsed.ledgerMemoQuery || ui.ledgerMemoQuery;
       ui.ledgerAmountFrom = parsed.ledgerAmountFrom || ui.ledgerAmountFrom;
       ui.ledgerAmountTo = parsed.ledgerAmountTo || ui.ledgerAmountTo;
+      ui.ledgerSelectedDate = parsed.ledgerSelectedDate || ui.ledgerSelectedDate;
       ui.breakdownMode = parsed.breakdownMode || ui.breakdownMode;
       ui.breakdownMonth = parsed.breakdownMonth || ui.breakdownMonth;
       ui.breakdownYear = parsed.breakdownYear || ui.breakdownYear;
@@ -1277,6 +1388,7 @@ function emptyState(title, sub){
 }
 
 var KIND_ICON = {transfer:"↔", debtPay:"✓", borrow:"↓"};
+var CLS_ICON = {asset:"#8AB66F", liability:"#A78BDB", expense:"#FFA500", income:"#2F7A56"};
 function txRowHtml(t, opts){
   var kindId = deriveKind(t.debitId, t.creditId);
   var debit = acctById(t.debitId), credit = acctById(t.creditId);
@@ -1320,13 +1432,15 @@ function txRowHtml(t, opts){
   '</div>';
 }
 
-function barListHtml(rows, denom){
+function barListHtml(rows, denom, cls){
   return '<div class="barlist">'+rows.map(function(r){
     var pct = denom ? Math.round((r.amount/denom)*100) : 0;
     var barW = pct>0 ? Math.max(2,Math.min(100,pct)) : 0;
+    var barColor = cls ? 'var(--'+cls+')' : swatchVar(r.swatch);
+    var swatchHtml = r.expenseType==="fixed" ? '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAYCAMAAAAmopZHAAAAAXNSR0IB2cksfwAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAPxQTFRFAAAAQA2FQA2FQA2FQA2FQA2FQA2FQA2FdE6oQA2FQA2FQA2F+PT8b0ekQA2FQA2FQA2FQA2F+/n+9fL6fFmtQA2FQA2FQA2F6eLz+/n//Pr/j3G5QA2FQA2Fmn7Bmn7BoonG+vj+varXb0ekQA2FjW65mn7Bmn7Bmn7Bmn7Bmn7Bmn7Bmn7BQA2FQA2Fmn7Bmn7Bmn7Bmn7Bmn7Bmn7Bmn7BXzSZQA2FQA2Fmn7Bmn7Bmn7Bmn7Bmn7Bmn7BQA2FQA2FQA2FQA2FQA2FdU+omn7Bmn7Bmn7BQA2FQA2Fflqumn7BmX3BQA2FQA2FeFSrgmenfF+kQA2FgGSmpohOmwAAAFR0Uk5TACDMpn/+/513qvuC9pH5S6sD7PpttL8FQv7/yqwEKO/z/f27cHBs9fDy5Nkqc8s0QfzQ7ffJGi8fS9+K6fSQO/D26NH/3v3xe1/s87Geuv+Ii3WzmvB/oAAAALRJREFUeJxjZMAOGMkXZ2Rk/ItNnIWRkeEXFnH2/0z/4BIIcU5GEPjxC02c/zsXSPwTVAdMXPSjAONLCaDEa4gERJyNgUGM8bEc2KTHYAlGiLAc420GNUYIuPkLoV6D8aIBVPj7DaMTcPPZGIwZ4WAvkr1sdmDz97F8Q3Wn516XqzqMu9w3o/nLbweDJyPjVvRwYAM6js2HcTOaOBvYzUBfoIqzQflscGGwOBtCGYo4NkAtcQDYZCsZUnGHQAAAAABJRU5ErkJggg==" style="width:16px;height:16px;flex:none;" alt="fixed"/>' : '';
     return '<div class="barlist-row">'+
-      '<div class="barlist-name"><span class="swatch" style="background:'+swatchVar(r.swatch)+';"></span>'+escapeHtml(r.name)+'</div>'+
-      '<div class="barlist-track"><div class="barlist-fill" style="width:'+barW+'%;background:'+swatchVar(r.swatch)+';"></div></div>'+
+      '<div class="barlist-name">'+swatchHtml+escapeHtml(r.name)+'</div>'+
+      '<div class="barlist-track"><div class="barlist-fill" style="width:'+barW+'%;background:'+barColor+';"></div></div>'+
       '<div class="barlist-pct faint">'+pct+'%</div>'+
       '<div class="barlist-val num">'+fmtWon(r.amount)+'</div>'+
     '</div>';
@@ -1361,7 +1475,7 @@ function ledgerItemName(t, kindId){
 
 function ledgerAcctCellHtml(acc, sign){
   if(!acc) return '<span class="faint">—</span>';
-  var dot = '<span class="dot-sm" style="background:'+(acc.swatch?swatchVar(acc.swatch):CLS_ICON[acc.cls])+';"></span>';
+  var dot = '<span class="dot-sm" style="background:'+CLS_ICON[acc.cls]+';"></span>';
   return dot+'<span data-action="filter-by-acct" data-acct="'+acc.id+'" style="cursor:pointer;text-decoration:underline;color:var(--link);">'+escapeHtml(acc.name)+'</span>'+' <span class="sign-tag sign-'+(sign==="+"?"pos":"neg")+'">'+sign+'</span>';
 }
 
@@ -1382,7 +1496,7 @@ function ledgerTableRowHtml(t, runningMap){
   '</td>';
   return '<tr class="ledger-tr" data-id="'+t.id+'" style="'+(isSelected?'background-color:#cce5ff;':'')+'" data-stop="1">'+
     checkbox+
-    '<td class="lt-date">'+fmtDateShort(t.date)+'</td>'+
+    '<td class="lt-date" data-action="filter-by-date" data-date="'+t.date+'" style="cursor:pointer;text-decoration:underline;color:var(--link);">'+fmtDateShort(t.date)+'</td>'+
     '<td class="lt-item"><span data-action="filter-by-item" data-item="'+escapeHtml(itemName)+'" style="cursor:pointer;text-decoration:underline;color:var(--link);">'+escapeHtml(itemName)+'</span>'+(t.memo?'<span class="lt-memo">'+escapeHtml(t.memo)+'</span>':"")+'</td>'+
     '<td class="lt-acct">'+ledgerAcctCellHtml(debit, debitCls?signFor("debit",debitCls):"")+'</td>'+
     '<td class="lt-acct">'+ledgerAcctCellHtml(credit, creditCls?signFor("credit",creditCls):"")+'</td>'+
@@ -1464,6 +1578,8 @@ function renderLedger(){
     }
     if(ui.ledgerAmountFrom!=="" && ui.ledgerAmountFrom!=null && t.amount < Number(ui.ledgerAmountFrom)) return false;
     if(ui.ledgerAmountTo!=="" && ui.ledgerAmountTo!=null && t.amount > Number(ui.ledgerAmountTo)) return false;
+    // 날짜 필터링: 특정 날짜를 선택한 경우 그 날짜만 표시
+    if(ui.ledgerSelectedDate!=="" && t.date !== ui.ledgerSelectedDate) return false;
     return true;
   }).sort(function(a,b){ return b.date.localeCompare(a.date) || b.createdAt-a.createdAt; });
 
@@ -1503,19 +1619,20 @@ function renderLedger(){
   }
   html += '</div>';
 
-  html += '<div class="grid-stats" style="grid-template-columns:1fr 1fr;">'+
-    '<div class="stat-card"><div class="stat-label">수입</div><div class="stat-value income num" style="font-size:1.15rem;">'+fmtWon(income)+'</div></div>'+
-    '<div class="stat-card"><div class="stat-label">지출</div><div class="stat-value expense num" style="font-size:1.15rem;">'+fmtWon(expense)+'</div></div>'+
-  '</div>';
-
   html += '<div class="toolbar">';
   html += '<div class="toolbar-fields">'+
     '<div class="field"><label>왼쪽(차변)</label><select data-action="ledger-debit-sel">'+ledgerAccountOptionsHtml(ui.ledgerDebitAccount)+'</select></div>'+
     '<div class="field"><label>오른쪽(대변)</label><select data-action="ledger-credit-sel">'+ledgerAccountOptionsHtml(ui.ledgerCreditAccount)+'</select></div>'+
     '<div class="field"><label>아이템</label><input type="text" data-action="ledger-item-input" placeholder="아이템 검색" value="'+escapeHtml(ui.ledgerItemQuery||"")+'"></div>'+
     '<div class="field"><label>메모</label><input type="text" data-action="ledger-memo-input" placeholder="메모 검색" value="'+escapeHtml(ui.ledgerMemoQuery||"")+'"></div>'+
-    '<div class="field"><label>최소 금액</label><input type="number" min="0" step="1" data-action="ledger-amount-input" data-field="from" placeholder="0" value="'+escapeHtml(ui.ledgerAmountFrom||"")+'"></div>'+
-    '<div class="field"><label>최대 금액</label><input type="number" min="0" step="1" data-action="ledger-amount-input" data-field="to" placeholder="제한 없음" value="'+escapeHtml(ui.ledgerAmountTo||"")+'"></div>'+
+    '<div class="field" style="grid-column:span 2;">'+
+      '<label style="display:block;margin-bottom:0.5rem;">금액</label>'+
+      '<div style="display:flex;gap:0.75rem;align-items:center;">'+
+        '<input type="number" min="0" step="1" data-action="ledger-amount-input" data-field="from" placeholder="0" value="'+escapeHtml(ui.ledgerAmountFrom||"")+'" style="flex:1;min-width:0;">'+
+        '<span style="flex-shrink:0;font-weight:500;color:var(--text-secondary);">~</span>'+
+        '<input type="number" min="0" step="1" data-action="ledger-amount-input" data-field="to" placeholder="제한 없음" value="'+escapeHtml(ui.ledgerAmountTo||"")+'" style="flex:1;min-width:0;">'+
+      '</div>'+
+    '</div>'+
   '</div>';
   html += '<div class="toolbar-row" style="justify-content:space-between;align-items:center;">'+
     '<div class="chiprow" style="margin-bottom:0;">'+
@@ -1548,7 +1665,7 @@ function renderLedger(){
       var totalStr = [];
       if(dayIncome) totalStr.push('<span class="num" style="color:var(--income);">+'+fmtWon(dayIncome)+'</span>');
       if(dayExpense) totalStr.push('<span class="num" style="color:var(--expense);">-'+fmtWon(dayExpense)+'</span>');
-      return '<div class="day-group"><div class="day-head"><span>'+fmtDateShort(date)+'</span><span class="d-total">'+totalStr.join(" · ")+'</span></div>'+
+      return '<div class="day-group"><div class="day-head"><span data-action="filter-by-date" data-date="'+date+'" style="cursor:pointer;text-decoration:underline;color:var(--link);">'+fmtDateShort(date)+'</span><span class="d-total">'+totalStr.join(" · ")+'</span></div>'+
         items.map(function(t){ return txRowHtml(t, {actions:true}); }).join("")+'</div>';
     }).join("")+'</div>';
   }
@@ -1714,12 +1831,12 @@ function rangeGroupedBreakdown(start, end, cls){
   var sections = [];
   var ungroupedItems = grouped.ungrouped
     .filter(function(a){ return acctAmt[a.id]>0; })
-    .map(function(a){ return {name:a.name, swatch:a.swatch, amount:acctAmt[a.id]}; });
+    .map(function(a){ return {name:a.name, swatch:a.swatch, amount:acctAmt[a.id], expenseType:a.expenseType}; });
   if(ungroupedItems.length){
     sections.push({id:"ungrouped", name:"미분류", amount: ungroupedItems.reduce(function(s,r){return s+r.amount;},0), items: ungroupedItems});
   }
   grouped.groups.forEach(function(g){
-    var items = g.items.filter(function(a){ return acctAmt[a.id]>0; }).map(function(a){ return {name:a.name, swatch:a.swatch, amount:acctAmt[a.id]}; });
+    var items = g.items.filter(function(a){ return acctAmt[a.id]>0; }).map(function(a){ return {name:a.name, swatch:a.swatch, amount:acctAmt[a.id], expenseType:a.expenseType}; });
     if(items.length){
       sections.push({id:g.group.id, name:g.group.name, amount: items.reduce(function(s,r){return s+r.amount;},0), items:items});
     }
@@ -1734,12 +1851,6 @@ function renderBreakdown(){
   var net = inc.total - exp.total;
 
   var html = '<div class="page-head"><h1 class="page-title">비용·수익</h1><div class="page-desc">기간을 골라 비용과 수익을 그룹별로 살펴보기</div></div>';
-
-  html += '<div class="grid-stats">'+
-    '<div class="stat-card"><div class="stat-label">비용</div><div class="stat-value num expense">'+fmtWon(exp.total)+'</div></div>'+
-    '<div class="stat-card"><div class="stat-label">수익</div><div class="stat-value num income">'+fmtWon(inc.total)+'</div></div>'+
-    '<div class="stat-card"><div class="stat-label">당기순이익</div><div class="stat-value num" style="color:'+(net>=0?'var(--good)':'var(--expense)')+';">'+fmtWon(net)+'</div></div>'+
-  '</div>';
 
   html += '<div class="period-bar">';
   html += '<div class="seg">'+["month","year","range"].map(function(m){
@@ -1765,6 +1876,10 @@ function renderBreakdown(){
   html += '<div class="breakdown-grid">'+
     breakdownPanelHtml("expense", "비용", exp)+
     breakdownPanelHtml("income", "수익", inc)+
+  '</div>';
+
+  html += '<div class="grid-stats">'+
+    '<div class="stat-card"><div class="stat-label">당기순이익</div><div class="stat-value num" style="color:'+(net>=0?'var(--good)':'var(--expense)')+';">'+fmtWon(net)+'</div></div>'+
   '</div>';
 
   document.getElementById("main").innerHTML = html;
@@ -1794,7 +1909,7 @@ function breakdownGroupHtml(cls, sec, total){
     '<span class="bd-group-amt num">'+fmtWon(sec.amount)+'</span>'+
   '</button>';
   if(!collapsed){
-    html += '<div class="bd-items">'+barListHtml(sec.items, total||1)+'</div>';
+    html += '<div class="bd-items">'+barListHtml(sec.items, total||1, cls)+'</div>';
   }
   html += '</div>';
   return html;
@@ -1816,19 +1931,20 @@ function rowControlsHtml(cls, groupId, itemId, isFirst, isLast, deleteAction, ed
   '</div>';
 }
 function dragHandleHtml(kind, cls, id){
-  return '<span class="drag-handle" aria-hidden="true">'+ICONS.grip+'</span>';
+  return '<span class="drag-handle" aria-hidden="true" style="display:none;"></span>';
 }
 function groupHeadHtml(cls, g, itemCount, isFirst, isLast){
-  return '<div class="group-head" data-id="'+g.id+'">'+
-    '<span class="group-head-left">'+dragHandleHtml("group", cls, g.id)+
-    '<span class="group-name" data-action="open-group" data-id="'+g.id+'">'+escapeHtml(g.name)+' <span class="group-count">'+itemCount+'개</span></span></span>'+
-    '<div class="row-controls">'+
+  var collapsed = !!ui.settingsCollapsed[g.id];
+  return '<button type="button" class="bd-group-head" data-action="toggle-group" data-cls="'+cls+'" data-group-id="'+g.id+'" data-id="'+g.id+'" aria-expanded="'+(!collapsed)+'">'+
+    '<span class="bd-chev'+(collapsed?" collapsed":"")+'">'+ICONS.chev+'</span>'+
+    '<span class="group-name" data-cls="'+cls+'" data-id="'+g.id+'">'+escapeHtml(g.name)+' <span class="group-count">'+itemCount+'개</span></span>'+
+    '<div class="row-controls" data-stop="1">'+
       '<button class="icon-btn sm" data-action="move-group" data-cls="'+cls+'" data-id="'+g.id+'" data-dir="up" '+(isFirst?"disabled":"")+' aria-label="위로 이동">'+ICONS.up+'</button>'+
       '<button class="icon-btn sm" data-action="move-group" data-cls="'+cls+'" data-id="'+g.id+'" data-dir="down" '+(isLast?"disabled":"")+' aria-label="아래로 이동">'+ICONS.down+'</button>'+
       '<button class="icon-btn sm" data-action="open-group" data-id="'+g.id+'" aria-label="그룹 수정">'+ICONS.edit+'</button>'+
       '<button class="icon-btn sm" data-action="delete-group" data-id="'+g.id+'" aria-label="그룹 삭제">'+ICONS.trash+'</button>'+
     '</div>'+
-  '</div>';
+  '</button>';
 }
 /* Renders a class's items nested under group headers: ungrouped items first
    (no header, so single-account setups look exactly as before), then each
@@ -1839,23 +1955,49 @@ function groupHeadHtml(cls, g, itemCount, isFirst, isLast){
    at the ends. */
 function groupedListHtml(cls, rowFn){
   var g = groupedAccts(cls);
-  var html = "";
-  html += g.ungrouped.map(function(item, idx){
-    return rowFn(item, {cls:cls, groupId:null, isFirst: idx===0, isLast: idx===g.ungrouped.length-1});
-  }).join("");
-  html += g.groups.map(function(x, gi){
+  var html = '<div data-settings-container="'+cls+'" style="display:block;width:100%;overflow:visible;min-height:auto;">';
+
+  // ungrouped items 먼저
+  g.ungrouped.forEach(function(item, idx){
+    html += rowFn(item, {cls:cls, groupId:null, isFirst: idx===0, isLast: idx===g.ungrouped.length-1});
+  });
+
+  // 각 그룹을 평면 리스트로 표시 (후잉가계부 스타일)
+  g.groups.forEach(function(x, gi){
     var isFirstGroup = gi===0, isLastGroup = gi===g.groups.length-1;
-    return groupHeadHtml(cls, x.group, x.items.length, isFirstGroup, isLastGroup) +
-      (x.items.length ? x.items.map(function(item, idx){
-        return rowFn(item, {cls:cls, groupId:x.group.id, isFirst: idx===0, isLast: idx===x.items.length-1});
-      }).join("") : '<div class="group-empty">아직 항목이 없어요.</div>');
-  }).join("");
+    var collapsed = !!ui.settingsCollapsed[x.group.id];
+
+    // 그룹 헤더를 평면 항목으로 표시
+    html += '<div class="settings-item group-header" data-id="'+x.group.id+'" data-type="group" data-cls="'+cls+'" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px 8px 36px;margin-bottom:0;background:none;border-radius:0;border:none;border-bottom:1px solid var(--line);font-size:0.9rem;overflow:visible;cursor:move;">';
+
+    html += '<span class="group-drag-handle" style="display:none;"></span>';
+    html += '<span class="group-name" style="flex:1;font-weight:800;font-size:1.05rem;">'+escapeHtml(x.group.name)+' <span style="color:var(--ink-faint);font-weight:400;font-size:0.85rem;">'+x.items.length+'개</span></span>';
+
+    // 그룹 컨트롤
+    html += '<div class="row-controls" style="display:flex;align-items:center;gap:1px;flex:none;margin-left:auto;">';
+    html += '<button class="icon-btn sm" data-action="move-group" data-cls="'+cls+'" data-id="'+x.group.id+'" data-dir="up" '+(isFirstGroup?"disabled":"")+' aria-label="위로 이동">'+ICONS.up+'</button>';
+    html += '<button class="icon-btn sm" data-action="move-group" data-cls="'+cls+'" data-id="'+x.group.id+'" data-dir="down" '+(isLastGroup?"disabled":"")+' aria-label="아래로 이동">'+ICONS.down+'</button>';
+    html += '<button class="icon-btn sm" data-action="open-group" data-id="'+x.group.id+'" aria-label="그룹 수정">'+ICONS.edit+'</button>';
+    html += '<button class="icon-btn sm" data-action="delete-group" data-id="'+x.group.id+'" aria-label="그룹 삭제">'+ICONS.trash+'</button>';
+    html += '</div>';
+    html += '</div>';
+
+    // 그룹 아래 항목들을 평면 리스트로
+    if(x.items.length){
+      x.items.forEach(function(item, idx){
+        var itemHtml = rowFn(item, {cls:cls, groupId:x.group.id, isFirst: idx===0, isLast: idx===x.items.length-1});
+        // rowFn이 반환한 HTML의 .catrow를 .settings-item으로 변환
+        itemHtml = itemHtml.replace('class="catrow"', 'class="settings-item account-item" data-type="account" data-group-id="'+x.group.id+'"');
+        html += itemHtml;
+      });
+    }
+  });
+
+  html += '</div>';
   return html;
 }
 function acctAddonHtml(cls){
-  var itemAction = (cls==="asset" || cls==="liability") ? "open-account" : "open-category";
-  return '<button class="btn btn-sm btn-ghost" data-action="open-group" data-cls="'+cls+'"><span class="ic" style="width:14px;height:14px;">'+ICONS.plus+'</span>그룹</button>'+
-    '<button class="btn btn-sm" data-action="'+itemAction+'" data-cls="'+cls+'"><span class="ic" style="width:14px;height:14px;">'+ICONS.plus+'</span>추가</button>';
+  return '<button class="btn btn-sm" data-action="open-add-modal" data-cls="'+cls+'"><span class="ic" style="width:14px;height:14px;">'+ICONS.plus+'</span>추가</button>';
 }
 
 /* Percentage-of-total, huing-style bar row for a single account: left-aligned
@@ -1867,9 +2009,10 @@ function acctItemBarRowHtml(a, ctx, clsTotal, color){
   var pct = clsTotal ? Math.round((bal/clsTotal)*100) : 0;
   var barW = pct>0 ? Math.max(2,Math.min(100,pct)) : 0;
   var balColor = ctx.cls==="liability" ? (bal>0?'var(--expense)':'var(--ink)') : 'var(--ink)';
+  var iconHtml = ctx.cls==="liability" ? '<span style="display:flex;align-items:center;color:var(--expense);width:16px;height:16px;flex:none;">'+ICONS.card+'</span>' : '';
   return '<div class="acct-row">'+
     '<div class="acct-left">'+
-    '<span class="acct-dot" style="background:'+color+';"></span>'+
+    iconHtml+
     '<span class="acct-name">'+escapeHtml(a.name)+'</span></div>'+
     '<span class="barlist-track bd-inline-track"><span class="barlist-fill" style="width:'+barW+'%;background:'+color+';"></span></span>'+
     '<div class="acct-right"><span class="bd-group-pct faint">'+pct+'%</span>'+
@@ -1904,11 +2047,10 @@ function acctGroupBarHtml(cls, g, items, clsTotal, isFirstGroup, isLastGroup, co
 function acctPanelHtml(cls, label, color){
   var g = groupedAccts(cls);
   var clsTotal = totalByCls(cls, null);
-  var html = '<div class="card breakdown-panel"><div class="card-head"><span class="card-title">'+label+'</span><span class="breakdown-total num" style="color:'+color+';">'+fmtWon(clsTotal)+'</span></div>';
+  var html = '<div class="card breakdown-panel"><div class="card-head"><span class="card-title">'+label+'</span><div class="bd-total-row"><span class="barlist-track" style="flex:1;"><span class="barlist-fill" style="width:100%;background:'+color+';height:6px;"></span></span><span class="bd-group-pct faint">100%</span></div><span class="breakdown-total num" style="color:'+color+';">'+fmtWon(clsTotal)+'</span></div>';
   if(g.ungrouped.length===0 && g.groups.length===0){
     html += emptyState(cls==="asset"?"등록된 자산이 없어요":"등록된 부채가 없어요", "설정에서 추가할 수 있어요.");
   }else{
-    html += '<div class="bd-total-row"><span class="barlist-track" style="flex:1;"><span class="barlist-fill" style="width:100%;background:'+color+';"></span></span><span class="bd-group-pct faint">100%</span></div>';
     html += g.ungrouped.map(function(a){
       return acctItemBarRowHtml(a, {cls:cls}, clsTotal, color);
     }).join("");
@@ -1930,7 +2072,9 @@ function renderAccounts(){
   html += acctPanelHtml("liability", "부채 계정", "var(--expense)");
 
   // 순자산을 부채 섹션 아래로 이동
-  html += '<div class="card breakdown-panel"><div class="card-head"><span class="card-title">순자산</span><span class="breakdown-total num" style="color:'+(netWorth>=0?'var(--good)':'var(--expense)')+';">'+fmtWon(netWorth)+'</span></div>';
+  var netWorthPct = totalAsset > 0 ? Math.round((netWorth/totalAsset)*100) : 0;
+  var netWorthBarW = netWorthPct>0 ? Math.max(2,Math.min(100,netWorthPct)) : 0;
+  html += '<div class="card breakdown-panel"><div class="card-head"><span class="card-title">순자산</span><div class="bd-total-row"><span class="barlist-track" style="flex:1;"><span class="barlist-fill" style="width:'+netWorthBarW+'%;background:'+(netWorth>=0?'var(--good)':'var(--expense)')+';height:6px;"></span></span><span class="bd-group-pct faint">'+netWorthPct+'%</span></div><span class="breakdown-total num" style="color:'+(netWorth>=0?'var(--good)':'var(--expense)')+';">'+fmtWon(netWorth)+'</span></div>';
   html += '<div class="faint" style="padding:12px 0;font-size:0.9rem;">자산 - 부채 = 순자산</div>';
   html += '</div>';
 
@@ -1942,27 +2086,6 @@ function renderAccounts(){
 /* ================= render: settings ================= */
 function renderSettings(){
   var html = '<div class="page-head"><h1 class="page-title">설정</h1></div>';
-
-  // 세션 관리 섹션
-  html += '<div class="card"><div class="card-head"><span class="card-title">가계부 관리</span></div>';
-  html += '<div style="margin-bottom:12px;">';
-  html += '<label style="display:block;font-size:0.85rem;color:var(--ink-soft);margin-bottom:6px;">현재 가계부</label>';
-  html += '<select data-action="switch-session" style="width:100%;padding:8px;border:1px solid var(--line);border-radius:4px;background:var(--surface);">';
-  var sessions = state.sessions || {};
-  Object.keys(sessions).forEach(function(sid){
-    var sess = sessions[sid];
-    html += '<option value="'+sid+'" '+(sid===ui.activeSessionId?'selected':'')+'>'+escapeHtml(sess.name)+'</option>';
-  });
-  html += '</select>';
-  html += '</div>';
-  html += '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">';
-  html += '<button class="btn btn-sm" data-action="add-session">+ 새 가계부</button>';
-  html += '<button class="btn btn-sm btn-ghost" data-action="duplicate-session">복사</button>';
-  html += '<button class="btn btn-sm btn-ghost" data-action="rename-session">이름 변경</button>';
-  html += '<button class="btn btn-sm btn-danger" data-action="delete-session">삭제</button>';
-  html += '</div>';
-  html += '<div class="faint" style="font-size:0.78rem;">각 가계부는 완전히 독립적인 거래내역을 가지고 있습니다.</div>';
-  html += '</div>';
 
   /* 후잉가계부처럼 자산·부채·비용·수익 네 분류 모두 여기 설정에서 카테고리(계정)를
      추가·수정·삭제·이동할 수 있어요 - 자산·부채 탭은 그래서 조회 전용으로 남아있어요. */
@@ -1984,8 +2107,17 @@ function renderSettings(){
         dotHtml = '<span style="display:flex;align-items:center;color:#2ecc71;width:16px;height:16px;flex:none;">'+ICONS.trends+'</span>';
         metaStr = '';
       }else{
-        dotHtml = '<span class="swatch" style="background:'+swatchVar(c.swatch)+';"></span>';
-        metaStr = cls==="expense" && state.budgets[c.id] ? ' · 예산 '+fmtWon(state.budgets[c.id]) : '';
+        metaStr = '';
+        dotHtml = '<div style="display:flex;align-items:center;gap:4px;flex:none;">';
+        if(cls==="expense"){
+          if(c.expenseType==="fixed"){
+            dotHtml += '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAYCAMAAAAmopZHAAAAAXNSR0IB2cksfwAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAPxQTFRFAAAAQA2FQA2FQA2FQA2FQA2FQA2FQA2FdE6oQA2FQA2FQA2F+PT8b0ekQA2FQA2FQA2FQA2F+/n+9fL6fFmtQA2FQA2FQA2F6eLz+/n//Pr/j3G5QA2FQA2Fmn7Bmn7BoonG+vj+varXb0ekQA2FjW65mn7Bmn7Bmn7Bmn7Bmn7Bmn7Bmn7BQA2FQA2Fmn7Bmn7Bmn7Bmn7Bmn7Bmn7Bmn7BXzSZQA2FQA2Fmn7Bmn7Bmn7Bmn7Bmn7Bmn7BQA2FQA2FQA2FQA2FQA2FdU+omn7Bmn7Bmn7BQA2FQA2Fflqumn7BmX3BQA2FQA2FeFSrgmenfF+kQA2FgGSmpohOmwAAAFR0Uk5TACDMpn/+/513qvuC9pH5S6sD7PpttL8FQv7/yqwEKO/z/f27cHBs9fDy5Nkqc8s0QfzQ7ffJGi8fS9+K6fSQO/D26NH/3v3xe1/s87Geuv+Ii3WzmvB/oAAAALRJREFUeJxjZMAOGMkXZ2Rk/ItNnIWRkeEXFnH2/0z/4BIIcU5GEPjxC02c/zsXSPwTVAdMXPSjAONLCaDEa4gERJyNgUGM8bEc2KTHYAlGiLAc420GNUYIuPkLoV6D8aIBVPj7DaMTcPPZGIwZ4WAvkr1sdmDz97F8Q3Wn516XqzqMu9w3o/nLbweDJyPjVvRwYAM6js2HcTOaOBvYzUBfoIqzQflscGGwOBtCGYo4NkAtcQDYZCsZUnGHQAAAAABJRU5ErkJggg==" style="width:16px;height:16px;flex:none;" alt="fixed"/>';
+          }
+          if(state.budgets[c.id]) metaStr += ' · 예산 '+fmtWon(state.budgets[c.id]);
+        }else if(cls==="income"){
+          // 수익 카테고리: 아이콘 없음
+        }
+        dotHtml += '</div>';
       }
       return '<div class="catrow" data-id="'+c.id+'" data-row-group="'+(ctx.groupId||"")+'">'+
         dragHandleHtml("item", ctx.cls, c.id)+
@@ -1994,7 +2126,7 @@ function renderSettings(){
         rowControlsHtml(ctx.cls, ctx.groupId, c.id, ctx.isFirst, ctx.isLast, "delete-account", editAction)+
         '</div>';
     }
-    html += '<div class="card"><div class="card-head"><span class="card-title">'+label+'</span>'+acctAddonHtml(cls)+'</div>';
+    html += '<div class="settings-section"><div class="settings-section-head"><span class="settings-section-title">'+label+'</span>'+acctAddonHtml(cls)+'</div>';
     if(list.length===0 && groupsByCls(cls).length===0){
       html += emptyState(isAcct?"등록된 계정이 없어요":"등록된 카테고리가 없어요","+ 그룹 또는 + 추가로 만들어보세요.");
     }else{
@@ -2017,7 +2149,9 @@ function renderSettings(){
     '<button class="btn btn-danger" data-action="reset-data">전체 초기화</button>'+
     '</div><div class="faint" style="font-size:0.78rem;margin-top:10px;">모든 거래는 차변·대변 복식부기 방식으로 기록되어, 자산·부채·수익·비용이 서로 맞물려 계산됩니다. 데이터는 이 페이지에 자동 저장됩니다.</div></div>';
 
-  document.getElementById("main").innerHTML = html;
+  var m = document.getElementById("main");
+  m.className = "settings-view";
+  m.innerHTML = html;
 }
 
 /* ================= modals ================= */
@@ -2032,6 +2166,38 @@ function closeModal(){
   ui.modal=null;
   pendingConfirm=null;
   document.getElementById("modal-root").innerHTML="";
+}
+
+function initTabSwitching(){
+  var tabBtns = document.querySelectorAll('.tab-btn');
+  tabBtns.forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.preventDefault();
+      var tabName = btn.getAttribute('data-tab');
+
+      // 버튼 스타일 변경
+      tabBtns.forEach(function(b){
+        b.classList.remove('active');
+        b.style.borderBottom = '3px solid transparent';
+        b.style.color = 'var(--ink-faint)';
+      });
+      btn.classList.add('active');
+      btn.style.borderBottom = '3px solid var(--brand)';
+      btn.style.color = 'var(--ink)';
+
+      // 탭 컨텐츠 변경
+      var panes = document.querySelectorAll('.tab-pane');
+      panes.forEach(function(pane){
+        pane.classList.remove('active');
+        pane.style.display = 'none';
+      });
+      var activePane = document.querySelector('[data-tab-pane="' + tabName + '"]');
+      if(activePane){
+        activePane.classList.add('active');
+        activePane.style.display = 'block';
+      }
+    });
+  });
 }
 /* window.confirm() is unreliable inside a sandboxed artifact iframe (it can be
    blocked entirely, silently returning without ever prompting) - which is why
@@ -2068,7 +2234,7 @@ function sideGridHtml(side, selectedId){
     var sign = signFor(side, g.cls);
     return '<div class="acctgroup-label">'+g.label+'</div><div class="catgrid">'+
       list.map(function(a){
-        var icon = '<span class="swatch" style="background:'+(a.swatch?swatchVar(a.swatch):CLS_ICON[g.cls])+';"></span>';
+        var icon = '';
         return '<button type="button" class="catpick" data-action="pick-side" data-side="'+side+'" data-val="'+a.id+'" aria-pressed="'+(selectedId===a.id)+'">'+
           icon+escapeHtml(a.name)+'<span class="sign-tag sign-'+(sign==="+"?"pos":"neg")+'">'+sign+'</span></button>';
       }).join("")+
@@ -2159,13 +2325,13 @@ function categoryModalHtml(cls, editing){
     '<button class="icon-btn" data-action="close-modal" aria-label="닫기">'+ICONS.close+'</button></div>';
   html += '<form data-form="category" data-cls="'+cls+'" data-id="'+(isEdit?c.id:"")+'">';
   html += '<div class="field"><label>이름</label><input type="text" name="name" value="'+escapeHtml(c.name)+'" required></div>';
-  html += '<div class="field"><label>색상</label><div class="catgrid">'+
-    SWATCH_KEYS.map(function(sw){
-      return '<button type="button" class="catpick" data-action="cat-swatch" data-val="'+sw+'" aria-pressed="'+(c.swatch===sw)+'" style="padding:8px;"><span class="swatch" style="background:var(--cat-'+sw+');width:16px;height:16px;"></span></button>';
-    }).join("")+
-  '</div><input type="hidden" name="swatch" value="'+c.swatch+'"></div>';
+  html += '<input type="hidden" name="swatch" value="'+(c.swatch||"other")+'">';
   html += groupSelectHtml(cls, c.groupId);
   if(cls==="expense"){
+    html += '<div class="field"><label>지출 유형</label><select name="expenseType" style="padding:8px;border:1px solid var(--line-strong);border-radius:6px;background:var(--surface);color:var(--ink);font-size:0.9rem;">'+
+      '<option value="fixed" '+(c.expenseType==="fixed"?"selected":"")+'>고정지출</option>'+
+      '<option value="variable" '+(c.expenseType==="variable"?"selected":"")+'>유동지출</option>'+
+    '</select></div>';
     html += '<div class="field"><label>월 예산 (선택)</label><input type="number" name="budget" min="0" step="1" value="'+(isEdit && state.budgets[c.id] ? state.budgets[c.id] : "")+'" placeholder="0"></div>';
   }
   html += '<div class="modal-actions">';
@@ -2188,6 +2354,60 @@ function groupModalHtml(cls, editing){
   if(isEdit) html += '<button type="button" class="btn btn-danger" data-action="delete-group" data-id="'+g.id+'">삭제</button>';
   html += '<button type="submit" class="btn btn-primary">저장</button>';
   html += '</div></form>';
+  return html;
+}
+
+function addItemOrGroupModalHtml(cls){
+  var isAcct = cls==="asset" || cls==="liability";
+  var label = CLS_LABEL[cls];
+  var a = {name:"", cls:cls, initial:0, groupId:null};
+  var c = {name:"", swatch:SWATCH_KEYS[acctsByCls(cls).length % SWATCH_KEYS.length], groupId:null};
+  var g = {name:"", cls:cls};
+
+  var html = '<div class="modal-head">'+
+    '<div style="display:flex;gap:8px;">'+
+      '<button type="button" class="tab-btn active" data-tab="item" style="padding:8px 12px;border:none;background:transparent;color:var(--ink);font-weight:500;border-bottom:3px solid var(--brand);cursor:pointer;">항목</button>'+
+      '<button type="button" class="tab-btn" data-tab="group" style="padding:8px 12px;border:none;background:transparent;color:var(--ink-faint);font-weight:500;border-bottom:3px solid transparent;cursor:pointer;">그룹</button>'+
+    '</div>'+
+    '<button class="icon-btn" data-action="close-modal" aria-label="닫기">'+ICONS.close+'</button>'+
+  '</div>';
+
+  html += '<div class="tab-panes">';
+
+  // 항목 탭
+  html += '<div class="tab-pane active" data-tab-pane="item">';
+  html += '<form data-form="'+(isAcct?"account":"category")+'" data-cls="'+cls+'" data-id="">';
+  html += '<div class="field"><label>이름</label><input type="text" name="name" value="" required placeholder="예: '+(cls==="asset"?"국민은행 통장":"신용카드")+'"></div>';
+  if(isAcct){
+    html += '<div class="field"><label>기초 '+label+'액</label><input type="number" name="initial" value="0" min="0" step="1"></div>';
+  }else{
+    html += '<input type="hidden" name="swatch" value="'+(c.swatch||"other")+'">';
+    if(cls==="expense"){
+      html += '<div class="field"><label>지출 유형</label><select name="expenseType" style="padding:8px;border:1px solid var(--line-strong);border-radius:6px;background:var(--surface);color:var(--ink);font-size:0.9rem;">'+
+        '<option value="fixed">고정지출</option>'+
+        '<option value="variable" selected>유동지출</option>'+
+      '</select></div>';
+      html += '<div class="field"><label>월 예산 (선택)</label><input type="number" name="budget" min="0" step="1" value="" placeholder="0"></div>';
+    }
+  }
+  html += groupSelectHtml(cls, null);
+  html += '<div class="hint">'+(cls==="asset" ? "지금 이 계좌에 이미 있는 금액을 입력하세요." : (isAcct ? "지금 이미 지고 있는 빚(카드값, 대출 잔액 등)을 입력하세요." : "카테고리를 그룹에 속하게 할 수 있어요."))+'</div>';
+  html += '<div class="modal-actions">'+
+    '<button type="submit" class="btn btn-primary">저장</button>'+
+  '</div></form>';
+  html += '</div>';
+
+  // 그룹 탭
+  html += '<div class="tab-pane" data-tab-pane="group">';
+  html += '<form data-form="group" data-cls="'+cls+'" data-id="">';
+  html += '<div class="field"><label>그룹 이름</label><input type="text" name="name" value="" required placeholder="예: 입출금, 신용카드"></div>';
+  html += '<div class="hint">새 그룹을 만들고 나면 항목들을 이 그룹에 추가할 수 있어요.</div>';
+  html += '<div class="modal-actions">'+
+    '<button type="submit" class="btn btn-primary">저장</button>'+
+  '</div></form>';
+  html += '</div>';
+
+  html += '</div>';
   return html;
 }
 
@@ -2252,6 +2472,17 @@ document.addEventListener("click", function(e){
     }
     saveUi();
     renderLedger();
+  }else if(action==="filter-by-date"){
+    var date = el.getAttribute("data-date");
+    if(ui.ledgerSelectedDate === date){
+      // 이미 필터링 중이면 필터 해제
+      ui.ledgerSelectedDate = "";
+    }else{
+      // 해당 날짜로 필터링
+      ui.ledgerSelectedDate = date;
+    }
+    saveUi();
+    renderLedger();
   }else if(action==="open-tx"){
     var id = el.getAttribute("data-id");
     var tx = id ? state.transactions.find(function(t){return t.id===id;}) : null;
@@ -2281,6 +2512,10 @@ document.addEventListener("click", function(e){
     var cb = pendingConfirm; pendingConfirm = null;
     closeModal();
     if(cb) cb();
+  }else if(action==="open-add-modal"){
+    var cls = el.getAttribute("data-cls") || "asset";
+    openModal(addItemOrGroupModalHtml(cls));
+    setTimeout(function(){ initTabSwitching(); }, 0);
   }else if(action==="open-account"){
     var aid = el.getAttribute("data-id");
     var acc = aid ? acctById(aid) : null;
@@ -2350,6 +2585,7 @@ document.addEventListener("click", function(e){
     ui.ledgerDebitAccount = "all"; ui.ledgerCreditAccount = "all";
     ui.ledgerItemQuery = ""; ui.ledgerMemoQuery = "";
     ui.ledgerAmountFrom = ""; ui.ledgerAmountTo = "";
+    ui.ledgerSelectedDate = "";
     saveUi(); render();
   }else if(action==="breakdown-mode"){
     ui.breakdownMode = el.getAttribute("data-val"); saveUi(); render();
@@ -2368,6 +2604,10 @@ document.addEventListener("click", function(e){
   }else if(action==="toggle-acct-group"){
     var acctGroupId = el.getAttribute("data-id");
     ui.acctsCollapsed[acctGroupId] = !ui.acctsCollapsed[acctGroupId];
+    render();
+  }else if(action==="toggle-group"){
+    var groupId = el.getAttribute("data-id");
+    ui.settingsCollapsed[groupId] = !ui.settingsCollapsed[groupId];
     render();
   }else if(action==="export-csv"){
     exportCsv();
@@ -2509,10 +2749,12 @@ document.addEventListener("submit", function(e){
     var swatch = fd.get("swatch") || "other";
     var budget = fd.get("budget");
     var cgroupId = fd.get("groupId") || null;
+    var expenseType = ccls==="expense" ? (fd.get("expenseType") || "variable") : null;
     commit(function(s){
       var newId = cid || uid();
       var payload3 = {id:newId, name:cname, cls:ccls, swatch:swatch, groupId:cgroupId};
-      if(cid){ s.accounts = s.accounts.map(function(c){ return c.id===cid ? payload3 : c; }); }
+      if(expenseType) payload3.expenseType = expenseType;
+      if(cid){ s.accounts = s.accounts.map(function(c){ return c.id===cid ? Object.assign({}, c, payload3) : c; }); }
       else{ s.accounts.push(payload3); }
       if(ccls==="expense"){
         if(budget && Number(budget)>0) s.budgets[newId] = Math.round(Number(budget));
@@ -2559,11 +2801,306 @@ async function exportCsv(){
   }
 }
 
+/* ================= 드래그 앤 드롭 ================= */
+var dragState = null; // {element, startY, container}
+
+function initDragAndDrop(){
+  document.addEventListener('mousedown', function(e){
+    // 설정 탭의 항목/그룹이나 버튼이 아닌 부분 클릭 감지
+    var item = e.target.closest('.settings-item, .catrow');
+    if(item && !e.target.closest('button')){
+      e.preventDefault();
+      e.stopPropagation();
+
+      dragState = {
+        element: item,
+        startY: e.clientY,
+        container: item.closest('[data-settings-container]')
+      };
+      item.classList.add('dragging');
+      item.style.opacity = '0.5';
+      return;
+    }
+  });
+
+  document.addEventListener('mousemove', function(e){
+    if(!dragState) return;
+
+    var container = dragState.container;
+    var containerRect = container.getBoundingClientRect();
+    var currentY = e.clientY;
+    var deltaY = currentY - dragState.startY;
+
+    // 🔒 컨테이너 범위 안에서만 처리 (범위 밖이면 중단)
+    if(currentY < containerRect.top || currentY > containerRect.bottom){
+      return;
+    }
+
+    if(Math.abs(deltaY) > 10){
+      var item = dragState.element;
+      var itemType = item.getAttribute('data-type');
+
+      if(!item.classList.contains('is-dragging-active')){
+        item.classList.add('is-dragging-active');
+      }
+
+      // 🔑 대항목과 소항목을 분리해서 처리
+      var comparisonItems;
+
+      if(itemType === 'group'){
+        // 대항목: 다른 대항목들하고만 비교
+        comparisonItems = Array.from(container.querySelectorAll('.settings-item[data-type="group"]'));
+      } else {
+        // 소항목: 다른 소항목들하고만 비교
+        comparisonItems = Array.from(container.querySelectorAll('.settings-item[data-type="account"], .catrow'));
+      }
+
+      var currentIdx = comparisonItems.indexOf(item);
+
+      // 가장 가까운 같은 타입의 항목만 찾기
+      var closestItem = null;
+      var closestDistance = Infinity;
+
+      comparisonItems.forEach(function(el, idx){
+        if(el === item) return;
+
+        var rect = el.getBoundingClientRect();
+        var midpoint = rect.top + rect.height / 2;
+        var distance = Math.abs(currentY - midpoint);
+
+        if(distance < closestDistance){
+          closestDistance = distance;
+          closestItem = el;
+        }
+      });
+
+      // 가장 가까운 항목과의 위치만 비교하여 한 번만 이동
+      if(closestItem){
+        var rect = closestItem.getBoundingClientRect();
+        var midpoint = rect.top + rect.height / 2;
+        var closestIdx = comparisonItems.indexOf(closestItem);
+
+        if(currentY < midpoint && closestIdx <= currentIdx){
+          // 위로 이동
+          container.insertBefore(item, closestItem);
+          dragState.startY = currentY;
+        } else if(currentY > midpoint && closestIdx >= currentIdx){
+          // 아래로 이동
+          if(closestItem.nextElementSibling){
+            container.insertBefore(item, closestItem.nextElementSibling);
+          } else {
+            container.appendChild(item);
+          }
+          dragState.startY = currentY;
+        }
+      }
+    }
+  });
+
+  document.addEventListener('mouseup', function(e){
+    if(!dragState) return;
+
+    var item = dragState.element;
+    item.classList.remove('dragging');
+    item.classList.remove('is-dragging-active');
+    item.style.opacity = '';
+
+    var cls = dragState.container.getAttribute('data-settings-container');
+    syncFlatOrder(cls);
+
+    dragState = null;
+  });
+}
+
+/* 평면 리스트 구조의 순서 동기화 (그룹과 항목 모두) */
+function syncFlatOrder(cls){
+  commit(function(s){
+    var container = document.querySelector('[data-settings-container="'+cls+'"]');
+    if(!container) return s;
+
+    // DOM에서 평면 리스트 읽기
+    var allItems = Array.from(container.querySelectorAll('.settings-item, .catrow'));
+
+    // 📍 각 소항목의 그룹을 안전하게 업데이트 (위의 가장 가까운 그룹 기준, 없으면 유지)
+    allItems.forEach(function(el, idx){
+      if(el.getAttribute('data-type') === 'account'){
+        var newGroupId = null;
+
+        // 현재 항목 위의 가장 가까운 그룹 헤더 찾기
+        for(var i = idx - 1; i >= 0; i--){
+          if(allItems[i].getAttribute('data-type') === 'group'){
+            newGroupId = allItems[i].getAttribute('data-id');
+            break;
+          }
+        }
+
+        // 그룹을 찾은 경우만 업데이트 (없으면 원래 그룹 유지)
+        if(newGroupId){
+          el.setAttribute('data-group-id', newGroupId);
+        }
+      }
+    });
+
+    var newGroupOrder = [];
+    var accountsByGroup = {}; // {groupId: [accountIds]}
+
+    allItems.forEach(function(el){
+      var type = el.getAttribute('data-type');
+      var id = el.getAttribute('data-id');
+
+      if(type === 'group'){
+        // 그룹 헤더
+        newGroupOrder.push(id);
+        accountsByGroup[id] = [];
+      } else if(type === 'account'){
+        // 계정/카테고리 항목
+        var groupId = el.getAttribute('data-group-id') || null;
+        if(groupId){
+          if(!accountsByGroup[groupId]) accountsByGroup[groupId] = [];
+          accountsByGroup[groupId].push(id);
+        }
+      }
+    });
+
+    // state 업데이트
+    if(!s.groups) s.groups = [];
+
+    // 그룹 순서 업데이트
+    var classGroups = s.groups.filter(function(g){ return g.cls === cls; });
+    var reorderedGroups = [];
+    newGroupOrder.forEach(function(id){
+      var group = classGroups.find(function(g){ return g.id === id; });
+      if(group) reorderedGroups.push(group);
+    });
+    var otherGroups = s.groups.filter(function(g){ return g.cls !== cls; });
+    s.groups = reorderedGroups.concat(otherGroups);
+
+    // 계정 순서 업데이트 (그룹별로)
+    var classAccounts = s.accounts.filter(function(a){ return a.cls === cls; });
+    var reorderedAccounts = [];
+
+    newGroupOrder.forEach(function(groupId){
+      var idsInGroup = accountsByGroup[groupId] || [];
+      idsInGroup.forEach(function(id){
+        var account = classAccounts.find(function(a){ return a.id === id; });
+        if(account) reorderedAccounts.push(account);
+      });
+    });
+
+    var otherAccounts = s.accounts.filter(function(a){ return a.cls !== cls; });
+    s.accounts = reorderedAccounts.concat(otherAccounts);
+
+    return s;
+  });
+}
+
+function moveItem(cls, groupId, itemId, direction){
+  commit(function(s){
+    // 현재 그룹/클래스의 항목들 가져오기
+    var items = s.accounts.filter(function(a){
+      return a.cls === cls && (groupId ? a.groupId === groupId : !a.groupId);
+    });
+
+    // 항목 위치 찾기
+    var idx = -1;
+    for(var i = 0; i < items.length; i++){
+      if(items[i].id === itemId){
+        idx = i;
+        break;
+      }
+    }
+
+    if(idx === -1) return s;
+
+    // 이동 가능한지 확인
+    if(direction === 'up' && idx === 0) return s; // 첫 번째 항목은 위로 이동 불가
+    if(direction === 'down' && idx === items.length - 1) return s; // 마지막 항목은 아래로 이동 불가
+
+    // 항목 이동
+    var newIdx = direction === 'up' ? idx - 1 : idx + 1;
+    var temp = items[idx];
+    items[idx] = items[newIdx];
+    items[newIdx] = temp;
+
+    // 전체 accounts 배열 재구성
+    var newAccounts = [];
+    s.accounts.forEach(function(a){
+      if(a.cls === cls && (groupId ? a.groupId === groupId : !a.groupId)){
+        var item = items.shift();
+        if(item) newAccounts.push(item);
+      } else {
+        newAccounts.push(a);
+      }
+    });
+
+    s.accounts = newAccounts;
+    return s;
+  });
+}
+
+function handleItemReorder(cls, groupId, itemId, oldIndex, newIndex){
+  commit(function(s){
+    // DOM의 현재 순서를 읽어서 새로운 순서 결정
+    var container = document.querySelector('[data-settings-container="'+cls+'"]');
+    if(!container) return s;
+
+    // 현재 DOM에서 같은 그룹/클래스의 항목들 순서 읽기
+    var newOrder = [];
+    if(groupId){
+      // 그룹에 속한 항목들 - .bd-items 컨테이너에서 읽기
+      var groupContainer = container.querySelector('[data-group-items="'+groupId+'"]');
+      if(groupContainer){
+        groupContainer.querySelectorAll('.catrow').forEach(function(el){
+          newOrder.push(el.getAttribute('data-id'));
+        });
+      }
+    } else {
+      // ungrouped 항목들 - 직접 자식으로 있는 .catrow 읽기
+      container.querySelectorAll('.catrow[data-row-group=""]').forEach(function(el){
+        newOrder.push(el.getAttribute('data-id'));
+      });
+    }
+
+    if(newOrder.length === 0) return s;
+
+    // 현재 상태의 같은 그룹 항목들
+    var currentItems = s.accounts.filter(function(a){
+      return a.cls === cls && (groupId ? a.groupId === groupId : !a.groupId);
+    });
+
+    // 새 순서대로 재정렬
+    var reorderedItems = [];
+    newOrder.forEach(function(id){
+      var item = currentItems.find(function(a){ return a.id === id; });
+      if(item) reorderedItems.push(item);
+    });
+
+    // 전체 accounts 배열 재구성
+    var newAccounts = [];
+    var itemIndex = 0;
+    s.accounts.forEach(function(a){
+      if(a.cls === cls && (groupId ? a.groupId === groupId : !a.groupId)){
+        // 이 항목이 현재 그룹/비그룹에 속함 - 새로운 순서에서 가져오기
+        if(itemIndex < reorderedItems.length){
+          newAccounts.push(reorderedItems[itemIndex++]);
+        }
+      } else {
+        // 다른 그룹/클래스에 속함 - 그대로 추가
+        newAccounts.push(a);
+      }
+    });
+
+    s.accounts = newAccounts;
+    return s;
+  });
+}
+
 /* ================= boot ================= */
 render();
 getArtifact().then(function(artifact){
   if(artifact){
     setSaveStatus("idle");
+    setTimeout(initDragAndDrop, 100);
   }else{
     try{
       var cached = localStorage.getItem(LS_KEY);
@@ -2573,8 +3110,22 @@ getArtifact().then(function(artifact){
       }
     }catch(e){}
     setSaveStatus("error");
+    setTimeout(initDragAndDrop, 100);
   }
 });
+
+// 디버깅: Sortable 로드 확인
+console.log("Sortable 로드됨?", typeof Sortable !== 'undefined');
+
+// render 함수를 override해서 매번 초기화
+var originalRender = render;
+render = function(){
+  originalRender.apply(this, arguments);
+  setTimeout(function(){
+    console.log("initDragAndDrop 호출 중...");
+    initDragAndDrop();
+  }, 50);
+};
 
 })();
 </script>
